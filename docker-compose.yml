@@ -1,0 +1,96 @@
+version: "2"
+
+services:
+  mongo1:
+    image: "bitnami/mongodb:4.4.2"
+    container_name: "mongo1"
+    environment:
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ADVERTISED_HOSTNAME=${MONGODB1_HOSTNAME}
+      - MONGODB_PORT_NUMBER=27017
+      - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    volumes:
+      - "mongodb_master_data:/bitnami"
+    networks:
+      - replica-docker
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "500m"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.mongo.replica == 1
+
+  mongo2:
+    image: "bitnami/mongodb:4.4.2"
+    container_name: "mongo2"
+    depends_on:
+      - mongo1
+    environment:
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_PRIMARY_HOST=mongo1
+      - MONGODB_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_ADVERTISED_HOSTNAME=${MONGODB2_HOSTNAME}
+      - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
+    volumes:
+      - "mongodb_secondary_data:/bitnami"
+    networks:
+      - replica-docker
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "500m"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.mongo.replica == 2
+
+  mongo3:
+    image: "bitnami/mongodb:4.4.2"
+    container_name: "mongo3"
+    depends_on:
+      - mongo1
+    environment:
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_PRIMARY_HOST=mongo1
+      - MONGODB_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_ADVERTISED_HOSTNAME=${MONGODB3_HOSTNAME}
+      - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
+    volumes:
+      - "mongodb_arbiter_data:/bitnami"
+    networks:
+      - replica-docker
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "500m"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.mongo.replica == 3
+
+volumes:
+  mongodb_master_data:
+  mongodb_secondary_data:
+  mongodb_arbiter_data:
+
+networks:
+  replica-docker:
