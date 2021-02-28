@@ -29,4 +29,5 @@ services:
 
 networks:
   razr-overlay:
-    external: true
+    external:
+      name: razr-overlay
