@@ -1,4 +1,4 @@
-version: "3.5"
+version: "2"
 
 services:
   mongo3:
@@ -18,9 +18,7 @@ services:
     volumes:
       - "./data/mongo3:/bitnami"
     networks:
-      razr-overlay:
-        external:
-          name: razr-overlay
+      - "razr-overlay"
     logging:
       driver: "json-file"
       options:
@@ -28,13 +26,6 @@ services:
         max-size: "500m"
     restart: always
 
-volumes:
-  mongodb_master_data:
-    driver: local
-  mongodb_arbiter_data:
-    driver: local
-  mongodb_secondary_data:
-    driver: local
-
 networks:
-  replica-docker:
+  razr-overlay:
+    external: true

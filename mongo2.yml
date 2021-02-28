@@ -1,4 +1,4 @@
-version: "3.5"
+version: "2"
 
 services:
   mongo2:
@@ -18,12 +18,14 @@ services:
     volumes:
       - "./data/mongo2:/bitnami"
     networks:
-      razr-overlay:
-        external:
-          name: razr-overlay
+      - "razr-overlay"
     logging:
       driver: "json-file"
       options:
         max-file: "5"
         max-size: "500m"
     restart: always
+
+networks:
+  razr-overlay:
+    external: true
