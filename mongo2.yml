@@ -18,7 +18,7 @@ services:
     volumes:
       - "./data/mongo2:/bitnami"
     networks:
-      - "razr-overlay"
+      - "ingress"
     logging:
       driver: "json-file"
       options:
@@ -27,5 +27,5 @@ services:
     restart: always
 
 networks:
-  razr-overlay:
+  ingress:
     external: true
