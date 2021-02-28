@@ -19,12 +19,15 @@ services:
     volumes:
       - "./data/mongo1:/bitnami"
     networks:
-      razr-overlay:
-        external:
-          name: razr-overlay
+      - "razr-overlay"
     logging:
       driver: "json-file"
       options:
         max-file: "5"
         max-size: "500m"
     restart: always
+
+networks:
+  default:
+    external:
+      name: razr-overlay
