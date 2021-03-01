@@ -80,10 +80,37 @@ services:
         constraints:
           - node.labels.mongo.replica == 3
 
+  mongo4:
+    image: "bitnami/mongodb:4.4.2"
+    environment:
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_PRIMARY_HOST=mongo1
+      - MONGODB_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_ADVERTISED_HOSTNAME=${MONGODB3_HOSTNAME:-mongo4}
+      - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD:-password123 }
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY:-replicasetkey}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME:-razrnodes}
+    volumes:
+      - "mongodb_mongo4_data:/bitnami"
+    networks:
+      - mongo
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "500m"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.mongo.replica == 4
+
 volumes:
   mongodb_master_data:
   mongodb_secondary_data:
   mongodb_arbiter_data:
+  mongodb_mongo4_data:
 
 networks:
   mongo:
