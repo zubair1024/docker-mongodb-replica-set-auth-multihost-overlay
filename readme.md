@@ -31,9 +31,9 @@
 
    ```shell
    #ssh <-- The manager node server -->
-   docker node update --label-add mongo.replica=1 node1
-   docker node update --label-add mongo.replica=2 node2
-   docker node update --label-add mongo.replica=3 node3
+   docker node update --label-add mongo.replica1=1 node1
+   docker node update --label-add mongo.replica2=1 node2
+   docker node update --label-add mongo.replica3=1 node3
 
    ```
 
