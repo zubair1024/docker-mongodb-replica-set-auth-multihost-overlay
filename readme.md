@@ -64,3 +64,16 @@
    ```
 
 If everything is working, you're done 😉
+
+## How to remove?
+
+1. Remove the Swarm
+
+   ```
+   docker stack rm overlay
+   ```
+
+1. Remove the volumes
+   ```
+   docker volume rm $(docker volume ls -qf label=com.docker.stack.namespace=overlay)
+   ```
