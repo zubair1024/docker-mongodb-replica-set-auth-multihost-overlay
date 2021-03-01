@@ -52,7 +52,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.labels.mongo.replica2 == 2
+          - node.labels.mongo.replica2 == 1
 
   mongo3:
     image: "bitnami/mongodb:4.4.2"
@@ -78,7 +78,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.labels.mongo.replica3 == 3
+          - node.labels.mongo.replica3 == 1
 
   mongo4:
     image: "bitnami/mongodb:4.4.2"
@@ -104,7 +104,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.labels.mongo.replica4 == 4
+          - node.labels.mongo.replica4 == 1
 
 volumes:
   mongodb_master_data:
