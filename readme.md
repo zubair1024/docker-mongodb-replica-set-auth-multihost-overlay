@@ -27,69 +27,34 @@
    docker swarm join <token>
    ```
 
-1. Create ingress network
+1. Add labels for each node
 
    ```shell
-   docker network create -d overlay --attachable razr-overlay
+   #ssh <-- The manager node server -->
+   docker node update --label-add mongo.replica=1 node1
+   docker node update --label-add mongo.replica=2 node2
+   docker node update --label-add mongo.replica=3 node3
+
    ```
 
-1. start the containers
+1. start the swarm cluster as a docker stack
 
    ```shell
    # 192.168.99.101 mongo1
-   docker-compose -f ./mongo1.yml up -d
+   docker stack deploy -c docker-compose.yml overlay
    ```
 
-   ```shell
-   # 192.168.99.102 mongo2
-   docker-compose -f ./mongo2.yml up -d
+1. Open necessary ports of the swarm for each service
+
    ```
+   # docker service update --publish-rm 30001:30001 overlay_mongo1
+   # docker service update --publish-rm 30002:30002 overlay_mongo2
+   # docker service update --publish-rm 30003:30002 overlay_mongo3
+   # // if publish port was set before, need to remove first and update it.
 
-   ```shell
-   # 192.168.99.103 mongo1
-   docker-compose -f ./mongo3.yml up -d
-   ```
-
-1. Run the configuration
-
-   Option 1:
-
-   Run the `mongo-init.yml` container.
-
-   Option 2:
-
-   ```shell
-   docker exec -it mongo1 sh -c "mongo --port 30001 -u root"
-   ```
-
-   Initialize the replica set
-
-   ```javascript
-   rs.initiate(
-     {
-       _id: "rs0",
-       protocolVersion: 1,
-       version: 1,
-       members: [
-         {
-           _id: 0,
-           host: "mongo1:30001",
-           priority: 2,
-         },
-         {
-           _id: 1,
-           host: "mongo2:30002",
-           priority: 0,
-         },
-         {
-           _id: 2,
-           host: "mongo3:30003",
-           priority: 0,
-         },
-       ],
-     },
-     { force: true }
-   );
+   docker service update --publish-add 30001:30001 overlay_mongo1
+   docker service update --publish-add 30002:30002 overlay_mongo2
+   docker service update --publish-add 30003:30003 overlay_mongo3
    ```
 
 1. Check the replica set status
